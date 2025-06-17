@@ -1,29 +1,34 @@
 const express = require('express');
 const Note = require('../models/Note');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
-router.post('/', async (req, res) => {
-    const note = new Note(req.body);
-    await note.save();
-    res.status(201).json(note);
+router.post('/', auth, async (req, res) => {
+    try {
+        const note = new Note({ ...req.body, userId: req.user.id });
+        await note.save();
+        res.status(201).json(note);
+    } catch (err) {
+        res.status(400).json({ error: 'Invalid note data' });
+    }
 });
 
-router.get("/", async (req, res) => {
+router.get('/', auth, async (req, res) => {
     const { q, tags, match } = req.query;
 
-    let filter = {};
+    let filter = { userId: req.user.id };
 
     if (q) {
         filter.$or = [
-            { title: new RegExp(q, "i") },
-            { content: new RegExp(q, "i") }
+            { title: new RegExp(q, 'i') },
+            { content: new RegExp(q, 'i') }
         ];
     }
 
     if (tags) {
-        const tagArray = tags.split(",").map(tag => tag.trim());
+        const tagArray = tags.split(',').map(tag => tag.trim());
 
-        if (match === "all") {
+        if (match === 'all') {
             filter.tags = { $all: tagArray };
         } else {
             filter.tags = { $in: tagArray };
@@ -34,32 +39,35 @@ router.get("/", async (req, res) => {
         const notes = await Note.find(filter);
         res.json(notes);
     } catch (err) {
-        res.status(500).json({ error: "Something went wrong." });
+        res.status(500).json({ error: 'Something went wrong.' });
     }
 });
 
-router.delete('/:id', async (req, res) => {
-    await Note.findByIdAndDelete(req.params.id);
-    res.status(204).end();
+router.put('/:id', auth, async (req, res) => {
+    try {
+        const note = await Note.findOneAndUpdate(
+            {_id: req.params.id, userId: req.user.id },
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!note) return res.status(404).json({ error: 'Note not found' });
+
+        res.json(note);
+    } catch (err) {
+        res.status(400).json({ error: 'Invalid request' });
+    }
 });
 
-router.put("/:id", async (req, res) => {
-    const { id } = req.params;
-    const updatedData = req.body;
-
+router.delete('/:id', auth, async (req, res) => {
     try {
-        const updatedNote = await Note.findByIdAndUpdate(id, updatedData, {
-            new: true,
-            runValidators: true,
-        });
+        const note = await Note.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
 
-        if (!updatedNote) {
-            return res.status(404).json({ error: "Note not found" });
-        }
+        if (!note) return res.status(404).json({ error: 'Note not found' });
 
-        res.json(updatedNote);
+        res.json({ message: 'Note deleted successfully' });
     } catch (err) {
-        res.status(400).json({ error: "Invalid request" });
+        res.status(500).json({ error: 'Something went wrong.' });
     }
 });
 

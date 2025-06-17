@@ -1,0 +1,620 @@
+{
+	"info": {
+		"_postman_id": "0dba41d5-0ef3-475c-a8d1-28c8e9dfee1b",
+		"name": "Notes API Test",
+		"description": "Full flow testing user register, login, notes CRUD, role checks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45930690",
+		"_collection_link": "https://xinidev.postman.co/workspace/XiniDev's-Workspace~db6d72b7-1dcf-402c-8dd2-7213363d9dfa/collection/45930690-0dba41d5-0ef3-475c-a8d1-28c8e9dfee1b?action=share&source=collection_link&creator=45930690"
+	},
+	"item": [
+		{
+			"name": "Register User 1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"user1\",\r\n    \"password\":\"pass123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"user1Token\", jsonData.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"user1\",\r\n    \"password\":\"pass123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Note User 1 - Note 1",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user1Token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"Private Note\",\r\n    \"content\":\"Content for private note\",\r\n    \"tags\":[\"private\",\"user1\"]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User 2",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"user2\",\r\n    \"password\":\"pass123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"user2Token\", jsonData.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"user2\",\r\n    \"password\":\"pass123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Note User 2 - Note 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"user2Note1Id\", jsonData._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"Note One\",\r\n    \"content\":\"Content for note one\",\r\n    \"tags\":[\"tag1\",\"tag2\"]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Note User 2 - Note 2 with different tags",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"user2Note2Id\", jsonData._id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"Note Two\",\r\n    \"content\":\"Content for note two\",\r\n    \"tags\":[\"tag2\",\"tag3\"]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all notes for User 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search notes with one tag (tag1) for User 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes?tags=tag1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "tag1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search notes with two tags without match=all (tag1,tag3) for User 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes?tags=tag1,tag3",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "tag1,tag3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search notes with two tags with match=all (tag2,tag3) for User 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes?tags=tag2,tag3&match=all",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					],
+					"query": [
+						{
+							"key": "tags",
+							"value": "tag2,tag3"
+						},
+						{
+							"key": "match",
+							"value": "all"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search notes with q=Note and tags=tag1 for User 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes?q=Note&tags=tag1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Note"
+						},
+						{
+							"key": "tags",
+							"value": "tag1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update note 1 for User 2",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"Note One Updated\",\r\n    \"content\":\"Updated content\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/notes/{{user2Note1Id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes",
+						"{{user2Note1Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete note 2 for User 2",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes/{{user2Note2Id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes",
+						"{{user2Note2Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Try delete database with User 2 (should fail)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user2Token}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/admin/reset",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"admin",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Bad Admin User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"adminpass\",\r\n    \"role\":\"admin\",\r\n    \"adminSecret\": \"wrongSecret\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Admin User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"adminpass\",\r\n    \"role\":\"admin\",\r\n    \"adminSecret\": \"mySuperSecretKey123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Admin User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"adminToken\", jsonData.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"adminpass\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all notes as Admin (should be empty)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/notes",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete database as Admin (should succeed)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{adminToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/auth/reset",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
