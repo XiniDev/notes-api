@@ -143,7 +143,7 @@ Delete a note
 
 ## 📫 Postman Collection
 
-Import the included Postman collection in the postman directory with the sample_env.txt variables to test endpoints.
+Import the included Postman collection & environment in the postman directory with the sample_env.txt variables to test endpoints.
 
 ---
 
